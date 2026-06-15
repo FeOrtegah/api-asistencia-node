@@ -1,0 +1,25 @@
+{
+  "name": "api-asistencia-node",
+  "version": "1.0.0",
+  "description": "API de asistencia en Node.js con Express y PostgreSQL",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test tests/asistencia.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "node-fetch": "^3.3.2",
+    "supertest": "^7.2.2"
+  }
+}
