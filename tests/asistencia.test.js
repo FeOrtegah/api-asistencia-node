@@ -1,21 +1,10 @@
-// tests/asistencia.test.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Tests para api-asistencia-node
-// Usa node:test (nativo de Node.js) + mock del modelo para no depender de DB
-// Ejecutar con: npm test
-// ─────────────────────────────────────────────────────────────────────────────
- 
 const { test, describe, before, mock } = require('node:test');
 const assert = require('node:assert/strict');
- 
-// ── 1. MOCKEAR el pool de DB ANTES de cargar cualquier módulo del proyecto ───
-// (igual que User-Service mockea el controller antes de cargar la app)
 const mockPool = {
   query: mock.fn(),
   connect: mock.fn(() => Promise.resolve()),
 };
  
-// Reemplazamos el módulo de conexión en el registro de módulos
 require.cache[require.resolve('../db/conexion')] = {
   id: require.resolve('../db/conexion'),
   filename: require.resolve('../db/conexion'),
@@ -23,7 +12,6 @@ require.cache[require.resolve('../db/conexion')] = {
   exports: mockPool,
 };
  
-// También mockeamos inicializarDB para que no intente conectar a postgres real
 require.cache[require.resolve('../db/init')] = {
   id: require.resolve('../db/init'),
   filename: require.resolve('../db/init'),
@@ -31,18 +19,12 @@ require.cache[require.resolve('../db/init')] = {
   exports: async () => {},
 };
  
-// ── 2. Ahora sí cargamos la app ───────────────────────────────────────────────
-// Como index.js llama inicializarDB() y app.listen(), creamos una mini-app
-// que reutilice las rutas sin levantar el servidor.
 const express = require('express');
 const asistenciaRoutes = require('../routes/asistenciaRoutes');
- 
 const app = express();
 app.use(express.json());
 app.use('/api/v1/asistencias', asistenciaRoutes);
- 
-// Helper: hace peticiones HTTP directamente a la app sin network
-// (simula lo que supertest hace; usa http nativo para no añadir dependencias)
+ )
 const http = require('http');
  
 function request(method, path, body) {
@@ -79,7 +61,6 @@ function request(method, path, body) {
   });
 }
  
-// ── Datos de ejemplo que el "modelo" devolvería ───────────────────────────────
 const asistenciaEjemplo = {
   id: 1,
   estudiante_id: 10,
@@ -99,10 +80,7 @@ const bodyValido = {
   fecha: '2024-06-01',
   estado: 'PRESENTE',
 };
- 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/v1/asistencias  — obtenerAsistencias
-// ─────────────────────────────────────────────────────────────────────────────
+
  
 describe('GET /api/v1/asistencias', () => {
  
@@ -153,11 +131,7 @@ describe('GET /api/v1/asistencias', () => {
   });
  
 });
- 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/v1/asistencias/:id  — obtenerAsistenciaPorId
-// ─────────────────────────────────────────────────────────────────────────────
- 
+
 describe('GET /api/v1/asistencias/:id', () => {
  
   test('retorna una asistencia existente (200)', async () => {
@@ -200,11 +174,6 @@ describe('GET /api/v1/asistencias/:id', () => {
   });
  
 });
- 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/v1/asistencias  — guardarAsistencia
-// ─────────────────────────────────────────────────────────────────────────────
- 
 describe('POST /api/v1/asistencias', () => {
  
   test('crea asistencia con datos válidos (201)', async () => {
@@ -326,10 +295,6 @@ describe('POST /api/v1/asistencias', () => {
  
 });
  
-// ─────────────────────────────────────────────────────────────────────────────
-// PUT /api/v1/asistencias/:id  — modificarAsistencia
-// ─────────────────────────────────────────────────────────────────────────────
- 
 describe('PUT /api/v1/asistencias/:id', () => {
  
   test('actualiza asistencia existente (200)', async () => {
@@ -385,11 +350,7 @@ describe('PUT /api/v1/asistencias/:id', () => {
   });
  
 });
- 
-// ─────────────────────────────────────────────────────────────────────────────
-// DELETE /api/v1/asistencias/:id  — borrarAsistencia
-// ─────────────────────────────────────────────────────────────────────────────
- 
+
 describe('DELETE /api/v1/asistencias/:id', () => {
  
   test('elimina asistencia existente (200)', async () => {
@@ -432,11 +393,6 @@ describe('DELETE /api/v1/asistencias/:id', () => {
   });
  
 });
- 
-// ─────────────────────────────────────────────────────────────────────────────
-// Tests unitarios del helper interno: validarCampos
-// (lo probamos indirectamente a través del endpoint)
-// ─────────────────────────────────────────────────────────────────────────────
  
 describe('validarCampos — múltiples errores simultáneos', () => {
  
