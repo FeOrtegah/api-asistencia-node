@@ -21,7 +21,6 @@ const obtenerAsistenciasPorCursoYFecha = async (cursoId, fecha) => {
   return resultado.rows;
 };
 
-// --- FUNCIÓN NUEVA AGREGADA PARA EL FILTRADO POR ASIGNATURA ---
 const obtenerAsistenciasPorAsignaturaYFecha = async (asignaturaId, fecha) => {
   const resultado = await pool.query(
     'SELECT * FROM asistencia.asistencia WHERE asignatura_id = $1 AND fecha = $2 ORDER BY estudiante_id',
@@ -29,7 +28,7 @@ const obtenerAsistenciasPorAsignaturaYFecha = async (asignaturaId, fecha) => {
   );
   return resultado.rows;
 };
-// -----------------------------------------------------------
+
 
 const crearAsistencia = async (datos) => {
   const { estudiante_id, curso_id, profesor_id, asignatura_id, fecha, estado, observaciones } = datos;
